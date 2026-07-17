@@ -2,6 +2,13 @@ LOCAL_APPS = [
     "apps._auth",
     "apps.common",
     "apps.upload",
+    "apps.catalog",
+    "apps.blog",
+    "apps.about",
+    "apps.careers",
+    "apps.partners",
+    "apps.pages",
+    "apps.leads",
 ]
 
 THIRD_PARTY_APPS = [
