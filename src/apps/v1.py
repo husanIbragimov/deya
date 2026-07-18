@@ -9,6 +9,10 @@ urlpatterns = [
         "user/",
         include(("apps._auth.urls.user_urls", "user"), namespace="user"),
     ),
+    path(
+        "admin/user/",
+        include(("apps._auth.urls.user_admin_urls", "user"), namespace="user-admin"),
+    ),
     path("upload/", include(("apps.upload.urls", "upload"), namespace="upload")),
     path("", include(("apps.catalog.urls.urls", "catalog"), namespace="catalog")),
     path("admin/catalog/", include(("apps.catalog.urls.admin_urls", "catalog"), namespace="catalog-admin")),
