@@ -1,5 +1,6 @@
 from django.db import models
 
+from apps.common.choices import choices_help_text
 from apps.common.locale import TranslatableText as T
 from apps.common.locale import getTextLazy as _
 from apps.common.models import BaseModel
@@ -8,7 +9,13 @@ from apps.leads.choices import LeadStatusChoice, LeadTypeChoice
 
 
 class Lead(BaseModel):
-    type = models.CharField(max_length=16, choices=LeadTypeChoice.choices, db_index=True, verbose_name=_(T.lead_type))
+    type = models.CharField(
+        max_length=16,
+        choices=LeadTypeChoice.choices,
+        db_index=True,
+        verbose_name=_(T.lead_type),
+        help_text=choices_help_text(LeadTypeChoice),
+    )
     name = models.CharField(max_length=150, verbose_name=_(T.common_name))
     email = models.EmailField(verbose_name=_(T.email))
     phone = models.CharField(max_length=20, validators=[phone_validator], verbose_name=_(T.phone_number))
@@ -29,6 +36,7 @@ class Lead(BaseModel):
         default=LeadStatusChoice.NEW,
         db_index=True,
         verbose_name=_(T.status),
+        help_text=choices_help_text(LeadStatusChoice),
     )
     source_url = models.URLField(blank=True, verbose_name=_(T.source_url))
     ip_address = models.GenericIPAddressField(null=True, blank=True, verbose_name=_(T.ip_address))

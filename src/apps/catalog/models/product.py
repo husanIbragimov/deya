@@ -5,6 +5,7 @@ from apps.catalog.models.category import Category
 from apps.catalog.models.flavor import Flavor
 from apps.catalog.models.product_family import ProductFamily
 from apps.catalog.models.weight import Weight
+from apps.common.choices import choices_help_text
 from apps.common.locale import TranslatableText as T
 from apps.common.locale import getTextLazy as _
 from apps.common.models import BaseModel
@@ -39,6 +40,7 @@ class Product(BaseModel):
         blank=True,
         default=ProductBadgeChoice.NONE,
         verbose_name=_(T.badge),
+        help_text=choices_help_text(ProductBadgeChoice),
     )
     is_featured = models.BooleanField(default=False, db_index=True, verbose_name=_(T.is_featured))
     related_products = models.ManyToManyField(

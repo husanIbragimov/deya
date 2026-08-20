@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 from apps._auth.managers.user_manager import UserManager
-from apps.common.choices import UserRoleChoice
+from apps.common.choices import UserRoleChoice, choices_help_text
 from apps.common.locale import TranslatableText as T
 from apps.common.locale import getTextLazy as _
 from apps.common.models import BaseModel
@@ -29,6 +29,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     role = models.IntegerField(
         choices=UserRoleChoice.choices,
         default=UserRoleChoice.USER,
+        help_text=choices_help_text(UserRoleChoice),
     )
     is_active = models.BooleanField(
         default=True,
