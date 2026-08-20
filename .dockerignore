@@ -9,3 +9,17 @@
 .travis.yml
 venv/
 .git
+**/__pycache__
+*.pyc
+.venv
+.envs/
+.env
+logs/
+media/
+static/
+.volumes/
+docker/.volumes/
+.idea/
+.vscode/
+.pytest_cache/
+.mypy_cache/

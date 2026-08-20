@@ -1,9 +1,14 @@
 from rest_framework import serializers
 
+from apps.common.serializers import TranslatedJSONField
 from apps.pages.models import SiteSettings
 
 
 class SiteSettingsAdminSerializer(serializers.ModelSerializer):
+    address = TranslatedJSONField(required=False)
+    work_hours = TranslatedJSONField(required=False)
+    cookie_notice_text = TranslatedJSONField(required=False)
+
     class Meta:
         model = SiteSettings
         fields = (

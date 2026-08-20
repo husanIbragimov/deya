@@ -39,6 +39,10 @@ class TranslatableText(Enum):
     user_with_phone_exists = _("The user with this phone number already exists.")
     user_with_email_exists = _("The user with this email address already exists.")
 
+    translated_json_not_a_dict = _('Expected an object like {{"uz": "...", "ru": "...", "en": "..."}}.')
+    translated_json_invalid_keys = _("This field must contain exactly these languages: {languages}.")
+    translated_json_invalid_value = _('Value for "{lang}" must be a string.')
+
     # catalog
     category = _("category")
     categories = _("categories")

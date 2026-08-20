@@ -1,9 +1,13 @@
 from rest_framework import serializers
 
 from apps.catalog.models import Product
+from apps.common.serializers import TranslatedJSONField
 
 
 class ProductAdminSerializer(serializers.ModelSerializer):
+    name = TranslatedJSONField()
+    description = TranslatedJSONField(required=False)
+
     class Meta:
         model = Product
         fields = (
