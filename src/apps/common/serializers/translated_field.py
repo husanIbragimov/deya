@@ -49,7 +49,8 @@ class TranslatedField(serializers.Field):
         kwargs["read_only"] = True
         super().__init__(**kwargs)
 
-    def to_representation(self, value: dict[str, str] | str) -> str:
+    @staticmethod
+    def to_representation(value: dict[str, str] | str) -> str:
         if not value:
             return ""
         if isinstance(value, str):
