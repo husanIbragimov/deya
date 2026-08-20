@@ -9,8 +9,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    # 'DEFAULT_SCHEMA_CLASS': 'common.schema.CustomAutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "apps.common.schema.CustomAutoSchema",
     # 'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
     "EXCEPTION_HANDLER": "apps.logger.restapi_exception_handler.restapi_exception_handler",
     # 'DEFAULT_PERMISSION_CLASSES': (
