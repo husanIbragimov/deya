@@ -1,1 +1,7 @@
 * text=auto
+
+# Scripts executed inside Linux containers must never be checked out with
+# CRLF endings (breaks the `#!/bin/sh` shebang → "exec: no such file or
+# directory"), regardless of the checkout machine's core.autocrlf setting.
+*.sh text eol=lf
+Dockerfile* text eol=lf
