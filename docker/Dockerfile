@@ -32,6 +32,9 @@ RUN mkdir -p /app/logs /app/static /app/media /app/assets \
 
 COPY --chown=appuser:appuser ./src ./src
 COPY --chmod=755 docker/entrypoint.sh /entrypoint.sh
+# Defends against CRLF line endings sneaking in via a Windows checkout that
+# predates the .gitattributes eol=lf fix (breaks the #!/bin/sh shebang).
+RUN sed -i 's/\r$//' /entrypoint.sh
 WORKDIR /app/src
 
 ENTRYPOINT ["/entrypoint.sh"]
