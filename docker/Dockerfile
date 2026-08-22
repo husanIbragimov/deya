@@ -27,6 +27,9 @@ WORKDIR /app
 COPY --from=builder /wheels /wheels
 RUN pip install --no-index --find-links=/wheels /wheels/* && rm -rf /wheels
 
+RUN mkdir -p /app/logs /app/static /app/media /app/assets \
+    && chown -R appuser:appuser /app/logs /app/static /app/media /app/assets
+
 COPY --chown=appuser:appuser ./src ./src
 USER appuser
 WORKDIR /app/src
