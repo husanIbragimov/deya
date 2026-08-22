@@ -115,6 +115,8 @@ services:
 
   nginx:
     image: nginx:1.27
+    depends_on:
+      - web
     networks:
       - shared_network
     ports:
