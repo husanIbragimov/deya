@@ -18,7 +18,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     TEMPLATE_DEV=prod
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    netcat-openbsd libpq5 \
+    netcat-openbsd libpq5 gosu \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -u 1000 appuser
@@ -31,5 +31,7 @@ RUN mkdir -p /app/logs /app/static /app/media /app/assets \
     && chown -R appuser:appuser /app/logs /app/static /app/media /app/assets
 
 COPY --chown=appuser:appuser ./src ./src
-USER appuser
+COPY --chmod=755 docker/entrypoint.sh /entrypoint.sh
 WORKDIR /app/src
+
+ENTRYPOINT ["/entrypoint.sh"]
