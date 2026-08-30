@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.pages.models import SiteSettings, StaticPage
+from apps.pages.models import PrivacyPolicy, SiteSettings, StaticPage
 
 
 class SiteSettingsViewTests(APITestCase):
@@ -28,3 +28,25 @@ class StaticPageDetailViewTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["title"], "Политика")
+
+
+class PrivacyPolicyViewTests(APITestCase):
+    def test_returns_singleton_even_when_unconfigured(self):
+        response = self.client.get(reverse("pages:privacy-policy"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(PrivacyPolicy.objects.count(), 1)
+
+    def test_returns_full_multilingual_object(self):
+        PrivacyPolicy.objects.create(
+            title={"uz": "Maxfiylik siyosati", "ru": "Политика конфиденциальности", "en": "Privacy Policy"},
+            body={"uz": "Matn", "ru": "Текст", "en": "Text"},
+        )
+
+        response = self.client.get(reverse("pages:privacy-policy"))
+
+        self.assertEqual(
+            response.data["title"],
+            {"uz": "Maxfiylik siyosati", "ru": "Политика конфиденциальности", "en": "Privacy Policy"},
+        )
+        self.assertEqual(response.data["body"], {"uz": "Matn", "ru": "Текст", "en": "Text"})

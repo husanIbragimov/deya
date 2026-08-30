@@ -7,14 +7,16 @@ from rest_framework import serializers
 from apps.common.locale import TranslatableText as T
 from apps.common.locale import getTextLazy as _
 
-TRANSLATED_JSON_LANGUAGES = ("uz", "ru", "en")
+TRANSLATED_JSON_LANGUAGES = ("ru", "en")
 
 
 @extend_schema_field(OpenApiTypes.OBJECT)
 class TranslatedJSONField(serializers.JSONField):
-    """Validates a {"uz": "...", "ru": "...", "en": "..."} JSONField value.
+    """Validates a {"ru": "...", "en": "..."} JSONField value.
 
-    Rejects anything that isn't a dict keyed by exactly TRANSLATED_JSON_LANGUAGES with string values.
+    Rejects anything that isn't a dict keyed by exactly `languages` (defaults to
+    TRANSLATED_JSON_LANGUAGES) with string values. Pass `languages=(...)` to require a
+    different set for a specific field (e.g. legal pages that need "uz" too).
     """
 
     default_error_messages = {
@@ -23,17 +25,20 @@ class TranslatedJSONField(serializers.JSONField):
         "invalid_value": _(T.translated_json_invalid_value),
     }
 
+    def __init__(self, *, languages=TRANSLATED_JSON_LANGUAGES, **kwargs):
+        self.languages = languages
+        super().__init__(**kwargs)
+
     def to_internal_value(self, data):
         value = super().to_internal_value(data)
         if not isinstance(value, dict):
             self.fail("not_a_dict")
-        if set(value.keys()) != set(TRANSLATED_JSON_LANGUAGES):
-            self.fail("invalid_keys", languages=", ".join(TRANSLATED_JSON_LANGUAGES))
+        if set(value.keys()) != set(self.languages):
+            self.fail("invalid_keys", languages=", ".join(self.languages))
         for lang, text in value.items():
             if not isinstance(text, str):
                 self.fail("invalid_value", lang=lang)
         return value
-
 
 
 @extend_schema_field(OpenApiTypes.STR)

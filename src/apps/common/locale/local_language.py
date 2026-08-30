@@ -108,6 +108,10 @@ class TranslatableText(Enum):
     export_regions = _("export regions")
     position_x = _("X position")
     position_y = _("Y position")
+    factory = _("factory")
+    subdescription = _("subdescription")
+    product_info = _("product info")
+    product_infos = _("product info items")
 
     # careers
     company = _("company")
@@ -139,6 +143,7 @@ class TranslatableText(Enum):
     telegram_url = _("Telegram URL")
     catalog_file = _("catalog file")
     cookie_notice_text = _("cookie notice text")
+    privacy_policy = _("privacy policy")
 
     # leads
     lead = _("lead")

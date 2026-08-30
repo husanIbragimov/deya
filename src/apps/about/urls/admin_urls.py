@@ -3,8 +3,11 @@ from django.urls import path
 from apps.about.views.admin import (
     ExportRegionAdminDetailView,
     ExportRegionAdminListCreateView,
+    FactoryAdminView,
     HomeSlideAdminDetailView,
     HomeSlideAdminListCreateView,
+    ProductInfoAdminDetailView,
+    ProductInfoAdminListCreateView,
     StatAdminDetailView,
     StatAdminListCreateView,
     TimelineEventAdminDetailView,
@@ -20,4 +23,7 @@ urlpatterns = [
     path("timeline/<int:pk>/", TimelineEventAdminDetailView.as_view(), name="timeline-event-admin-detail"),
     path("export-regions/", ExportRegionAdminListCreateView.as_view(), name="export-region-admin-list"),
     path("export-regions/<int:pk>/", ExportRegionAdminDetailView.as_view(), name="export-region-admin-detail"),
+    path("factory/", FactoryAdminView.as_view(), name="factory-admin"),
+    path("product-info/", ProductInfoAdminListCreateView.as_view(), name="product-info-admin-list"),
+    path("product-info/<int:pk>/", ProductInfoAdminDetailView.as_view(), name="product-info-admin-detail"),
 ]

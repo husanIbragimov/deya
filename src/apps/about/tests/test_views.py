@@ -2,7 +2,14 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.about.models import ExportRegion, HomeSlide, Stat, TimelineEvent
+from apps.about.models import (
+    ExportRegion,
+    Factory,
+    HomeSlide,
+    ProductInfo,
+    Stat,
+    TimelineEvent,
+)
 from apps.about.tests.helpers import tr
 from apps.blog.tests.helpers import tr as blog_tr
 from apps.catalog.models import Category
@@ -41,3 +48,33 @@ class HomeViewTests(APITestCase):
         self.assertEqual(len(response.data["export_regions"]), 1)
         self.assertEqual(len(response.data["latest_posts"]), 1)
         self.assertEqual(response.data["featured_products"], [])
+
+
+class FactoryViewTests(APITestCase):
+    def test_returns_singleton_even_when_unconfigured(self):
+        response = self.client.get(reverse("about:factory"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Factory.objects.count(), 1)
+
+    def test_returns_configured_values(self):
+        Factory.objects.create(title=tr("Zavod"), description=tr("Tavsif"), image="factory.jpg")
+
+        response = self.client.get(reverse("about:factory"))
+
+        self.assertEqual(response.data["title"], "Zavod")
+        self.assertEqual(response.data["description"], "Tavsif")
+        self.assertEqual(response.data["image"], "factory.jpg")
+
+
+class ProductInfoListViewTests(APITestCase):
+    def test_lists_all_product_info_items(self):
+        ProductInfo.objects.create(title=tr("Croissant"), image="croissant.jpg")
+        ProductInfo.objects.create(title=tr("Cookie"), image="cookie.jpg")
+
+        response = self.client.get(reverse("about:product-info-list"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["title"], "Croissant")
+        self.assertEqual(response.data[0]["image"], "croissant.jpg")
