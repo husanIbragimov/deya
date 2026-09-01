@@ -1,7 +1,7 @@
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 
-from apps.pages.models import SiteSettings, StaticPage
+from apps.pages.models import PrivacyPolicy, SiteSettings, StaticPage
 
 
 class StaticPageModelTests(TestCase):
@@ -9,6 +9,19 @@ class StaticPageModelTests(TestCase):
         StaticPage.objects.create(slug="privacy-policy", title={"ru": "a", "en": "a"})
         with self.assertRaises(IntegrityError), transaction.atomic():
             StaticPage.objects.create(slug="privacy-policy", title={"ru": "b", "en": "b"})
+
+
+class PrivacyPolicyModelTests(TestCase):
+    def test_slug_is_unique(self):
+        PrivacyPolicy.objects.create(slug="for-users", title={"ru": "a", "en": "a"})
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            PrivacyPolicy.objects.create(slug="for-users", title={"ru": "b", "en": "b"})
+
+    def test_allows_more_than_one_record(self):
+        PrivacyPolicy.objects.create(slug="for-users", title={"ru": "a", "en": "a"})
+        PrivacyPolicy.objects.create(slug="for-partners", title={"ru": "b", "en": "b"})
+
+        self.assertEqual(PrivacyPolicy.objects.count(), 2)
 
 
 class SiteSettingsModelTests(TestCase):

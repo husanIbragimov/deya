@@ -12,5 +12,5 @@ class PrivacyPolicyAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PrivacyPolicy
-        fields = ("title", "body", "created_at", "updated_at")
+        fields = ("slug", "title", "body", "created_at", "updated_at")
         read_only_fields = ("created_at", "updated_at")

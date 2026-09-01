@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.pages.models import PrivacyPolicy, SiteSettings, StaticPage
+from apps.pages.models import Banner, PrivacyPolicy, SiteSettings, StaticPage
 
 
 class JSONWidgetAdminMixin:
@@ -30,10 +30,11 @@ class SiteSettingsAdmin(JSONWidgetAdminMixin, admin.ModelAdmin):
 
 @admin.register(PrivacyPolicy)
 class PrivacyPolicyAdmin(JSONWidgetAdminMixin, admin.ModelAdmin):
-    list_display = ("id",)
+    list_display = ("id", "slug")
+    search_fields = ("slug",)
 
-    def has_add_permission(self, request):
-        return not PrivacyPolicy.objects.exists()
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+@admin.register(Banner)
+class BannerAdmin(JSONWidgetAdminMixin, admin.ModelAdmin):
+    list_display = ("id", "type")
+    list_filter = ("type",)

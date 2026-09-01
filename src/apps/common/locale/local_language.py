@@ -144,6 +144,10 @@ class TranslatableText(Enum):
     catalog_file = _("catalog file")
     cookie_notice_text = _("cookie notice text")
     privacy_policy = _("privacy policy")
+    banner = _("banner")
+    banners = _("banners")
+    banner_type = _("banner type")
+    banner_type_partner = _("partner")
 
     # leads
     lead = _("lead")
@@ -166,3 +170,4 @@ class TranslatableText(Enum):
     unsubscribe_token = _("unsubscribe token")
     consent_personal_data_required = _("You must consent to personal data processing.")
     unsubscribe_token_invalid_message = _("This unsubscribe link is invalid or has already been used.")
+    factory_already_exists_message = _("Factory record already exists. Use PUT or PATCH to update it.")

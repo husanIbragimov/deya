@@ -13,4 +13,4 @@ class PrivacyPolicySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PrivacyPolicy
-        fields = ("title", "body")
+        fields = ("slug", "title", "body")

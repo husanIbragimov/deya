@@ -59,6 +59,33 @@ class FactoryAdminViewTests(APITestCase):
         response = self.client.get(reverse("about-admin:factory-admin"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_post_creates_singleton_when_missing(self):
+        response = self.client.post(
+            reverse("about-admin:factory-admin"),
+            data={
+                "title": {"ru": "Завод", "en": "Factory"},
+                "image": "factory-banner.jpg",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Factory.objects.count(), 1)
+        self.assertEqual(Factory.objects.get().image, "factory-banner.jpg")
+
+    def test_post_rejects_when_already_exists(self):
+        Factory.objects.create(title={"ru": "Старый", "en": "Old"}, image="old.jpg")
+
+        response = self.client.post(
+            reverse("about-admin:factory-admin"),
+            data={"title": {"ru": "Завод", "en": "Factory"}, "image": "new.jpg"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(Factory.objects.count(), 1)
+        self.assertEqual(Factory.objects.get().image, "old.jpg")
+
 
 class ProductInfoAdminCrudTests(APITestCase):
     def setUp(self):
