@@ -67,6 +67,7 @@ class TranslatableText(Enum):
     badge = _("badge")
     badge_new = _("new")
     badge_bestseller = _("bestseller")
+    discount = _("discount")
     is_featured = _("is featured")
     related_products = _("related products")
     product_image = _("product image")

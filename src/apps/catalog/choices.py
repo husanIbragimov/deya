@@ -8,6 +8,7 @@ class ProductBadgeChoice(models.TextChoices):
     NONE = "", ""
     NEW = "new", _(T.badge_new)
     BESTSELLER = "bestseller", _(T.badge_bestseller)
+    DISCOUNT = "discount", _(T.discount)
 
 
 class WeightUnitChoice(models.TextChoices):
