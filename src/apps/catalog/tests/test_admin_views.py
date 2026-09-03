@@ -32,7 +32,7 @@ class CategoryAdminCrudTests(APITestCase):
         create_response = self.client.post(
             reverse("catalog-admin:category-admin-list"),
             data={
-                "name": json.dumps({"ru": "Круассаны", "en": "Croissants"}),
+                "name": json.dumps({"uz": "Kruassanlar", "ru": "Круассаны", "en": "Croissants"}),
                 "slug": "croissants",
                 "image": "croissants.jpg",
                 "sort_order": 1,
@@ -52,7 +52,7 @@ class CategoryAdminCrudTests(APITestCase):
         update_response = self.client.put(
             detail_url,
             data={
-                "name": json.dumps({"ru": "Круассаны новый", "en": "Croissants new"}),
+                "name": json.dumps({"uz": "Kruassanlar yangi", "ru": "Круассаны новый", "en": "Croissants new"}),
                 "slug": "croissants",
                 "image": "croissants-new.jpg",
                 "sort_order": 2,

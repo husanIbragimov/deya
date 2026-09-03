@@ -17,7 +17,7 @@ class PostAdminCrudTests(APITestCase):
         create_response = self.client.post(
             reverse("blog-admin:post-admin-list"),
             data={
-                "title": json.dumps({"ru": "Новость", "en": "News"}),
+                "title": json.dumps({"uz": "Yangilik", "ru": "Новость", "en": "News"}),
                 "slug": "news",
                 "cover": "news-cover.jpg",
                 "published_at": "2026-01-01T00:00:00Z",

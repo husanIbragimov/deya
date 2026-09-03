@@ -7,7 +7,7 @@ from rest_framework import serializers
 from apps.common.locale import TranslatableText as T
 from apps.common.locale import getTextLazy as _
 
-TRANSLATED_JSON_LANGUAGES = ("ru", "en")
+TRANSLATED_JSON_LANGUAGES = ("uz", "ru", "en")
 
 
 @extend_schema_field(OpenApiTypes.OBJECT)

@@ -112,7 +112,7 @@ class BannerAdminViewTests(APITestCase):
             reverse("pages-admin:banner-admin-list"),
             data={
                 "type": "partner",
-                "title": {"ru": "Баннер", "en": "Banner"},
+                "title": {"uz": "Banner", "ru": "Баннер", "en": "Banner"},
                 "image": "banners/partner.png",
             },
             format="json",
@@ -128,7 +128,7 @@ class BannerAdminViewTests(APITestCase):
             reverse("pages-admin:banner-admin-detail", kwargs={"pk": banner_id}),
             data={
                 "type": "partner",
-                "title": {"ru": "Обновлено", "en": "Updated"},
+                "title": {"uz": "Yangilangan", "ru": "Обновлено", "en": "Updated"},
                 "image": "banners/partner-updated.png",
             },
             format="json",

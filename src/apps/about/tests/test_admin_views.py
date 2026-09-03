@@ -14,7 +14,7 @@ class StatAdminCrudTests(APITestCase):
     def test_create_and_delete_flow(self):
         create_response = self.client.post(
             reverse("about-admin:stat-admin-list"),
-            data={"value": "32+", "label": {"ru": "стран", "en": "countries"}},
+            data={"value": "32+", "label": {"uz": "davlat", "ru": "стран", "en": "countries"}},
             format="json",
         )
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED, create_response.data)
@@ -41,10 +41,10 @@ class FactoryAdminViewTests(APITestCase):
         response = self.client.put(
             reverse("about-admin:factory-admin"),
             data={
-                "title": {"ru": "Завод", "en": "Factory"},
-                "subtitle": {"ru": "Подзаголовок", "en": "Subtitle"},
-                "description": {"ru": "Описание", "en": "Description"},
-                "subdescription": {"ru": "Доп. описание", "en": "Subdescription"},
+                "title": {"uz": "Zavod", "ru": "Завод", "en": "Factory"},
+                "subtitle": {"uz": "Sarlavha", "ru": "Подзаголовок", "en": "Subtitle"},
+                "description": {"uz": "Tavsif", "ru": "Описание", "en": "Description"},
+                "subdescription": {"uz": "Qo'shimcha tavsif", "ru": "Доп. описание", "en": "Subdescription"},
                 "image": "factory-banner.jpg",
             },
             format="json",
@@ -63,7 +63,7 @@ class FactoryAdminViewTests(APITestCase):
         response = self.client.post(
             reverse("about-admin:factory-admin"),
             data={
-                "title": {"ru": "Завод", "en": "Factory"},
+                "title": {"uz": "Zavod", "ru": "Завод", "en": "Factory"},
                 "image": "factory-banner.jpg",
             },
             format="json",
@@ -78,7 +78,7 @@ class FactoryAdminViewTests(APITestCase):
 
         response = self.client.post(
             reverse("about-admin:factory-admin"),
-            data={"title": {"ru": "Завод", "en": "Factory"}, "image": "new.jpg"},
+            data={"title": {"uz": "Zavod", "ru": "Завод", "en": "Factory"}, "image": "new.jpg"},
             format="json",
         )
 
@@ -96,8 +96,8 @@ class ProductInfoAdminCrudTests(APITestCase):
         create_response = self.client.post(
             reverse("about-admin:product-info-admin-list"),
             data={
-                "title": {"ru": "Круассан", "en": "Croissant"},
-                "description": {"ru": "Описание", "en": "Description"},
+                "title": {"uz": "Kruassan", "ru": "Круассан", "en": "Croissant"},
+                "description": {"uz": "Tavsif", "ru": "Описание", "en": "Description"},
                 "image": "product.jpg",
             },
             format="json",
@@ -112,7 +112,7 @@ class ProductInfoAdminCrudTests(APITestCase):
         update_response = self.client.put(
             reverse("about-admin:product-info-admin-detail", kwargs={"pk": product_info_id}),
             data={
-                "title": {"ru": "Круассан New", "en": "Croissant New"},
+                "title": {"uz": "Kruassan New", "ru": "Круассан New", "en": "Croissant New"},
                 "image": "product-new.jpg",
             },
             format="json",

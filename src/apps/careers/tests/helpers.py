@@ -1,2 +1,2 @@
 def tr(text: str) -> dict:
-    return {"ru": text, "en": text}
+    return {"uz": text, "ru": text, "en": text}
