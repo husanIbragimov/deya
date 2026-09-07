@@ -49,6 +49,20 @@ class HomeViewTests(APITestCase):
         self.assertEqual(len(response.data["latest_posts"]), 1)
         self.assertEqual(response.data["featured_products"], [])
 
+    def test_only_active_slides_and_stats_are_listed(self):
+        HomeSlide.objects.create(title=tr("Active slide"), image="s1.jpg", is_active=True)
+        HomeSlide.objects.create(title=tr("Hidden slide"), image="s2.jpg", is_active=False)
+        Stat.objects.create(value="32+", label=tr("countries"), is_active=True)
+        Stat.objects.create(value="99+", label=tr("hidden"), is_active=False)
+
+        response = self.client.get(reverse("about:home"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["slides"]), 1)
+        self.assertEqual(response.data["slides"][0]["title"], "Active slide")
+        self.assertEqual(len(response.data["stats"]), 1)
+        self.assertEqual(response.data["stats"][0]["value"], "32+")
+
 
 class FactoryViewTests(APITestCase):
     def test_returns_singleton_even_when_unconfigured(self):

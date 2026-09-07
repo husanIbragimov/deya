@@ -12,6 +12,7 @@ class HomeSlide(BaseModel):
     image = models.CharField(max_length=500, verbose_name=_(T.image))
     cta_label = models.JSONField(default=dict, blank=True, verbose_name=_(T.cta_label))
     cta_url = models.URLField(blank=True, verbose_name=_(T.cta_url))
+    is_active = models.BooleanField(default=True, db_index=True, verbose_name=_(T.active))
 
     class Meta:
         ordering = ("id",)

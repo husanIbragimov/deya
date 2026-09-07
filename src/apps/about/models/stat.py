@@ -9,6 +9,7 @@ from apps.common.utils.translated_value import translated_value
 class Stat(BaseModel):
     value = models.CharField(max_length=16, verbose_name=_(T.weight_value))
     label = models.JSONField(default=dict, verbose_name=_(T.label))
+    is_active = models.BooleanField(default=True, db_index=True, verbose_name=_(T.active))
 
     class Meta:
         ordering = ("id",)

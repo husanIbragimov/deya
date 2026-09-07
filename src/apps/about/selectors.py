@@ -11,7 +11,7 @@ from apps.about.models import (
 
 
 def home_slides() -> QuerySet[HomeSlide]:
-    return HomeSlide.objects.all()
+    return HomeSlide.objects.filter(is_active=True)
 
 
 def get_factory() -> Factory:
@@ -23,7 +23,7 @@ def product_infos() -> QuerySet[ProductInfo]:
 
 
 def stats() -> QuerySet[Stat]:
-    return Stat.objects.all()
+    return Stat.objects.filter(is_active=True)
 
 
 def timeline_events() -> QuerySet[TimelineEvent]:

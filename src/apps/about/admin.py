@@ -20,12 +20,16 @@ class JSONWidgetAdminMixin:
 
 @admin.register(HomeSlide)
 class HomeSlideAdmin(JSONWidgetAdminMixin, admin.ModelAdmin):
-    list_display = ("id", "cta_url")
+    list_display = ("id", "cta_url", "is_active")
+    list_filter = ("is_active",)
+    list_editable = ("is_active",)
 
 
 @admin.register(Stat)
 class StatAdmin(JSONWidgetAdminMixin, admin.ModelAdmin):
-    list_display = ("id", "value")
+    list_display = ("id", "value", "is_active")
+    list_filter = ("is_active",)
+    list_editable = ("is_active",)
 
 
 @admin.register(TimelineEvent)
