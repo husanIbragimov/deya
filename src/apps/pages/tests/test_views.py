@@ -19,6 +19,21 @@ class SiteSettingsViewTests(APITestCase):
 
         self.assertEqual(response.data["phone"], "+998901234567")
 
+    def test_translated_json_fields_return_all_languages(self):
+        SiteSettings.objects.create(
+            address={"uz": "Manzil", "ru": "Адрес", "en": "Address"},
+            work_hours={"uz": "9-18", "ru": "9-18", "en": "9-18"},
+            cookie_notice_text={"uz": "Cookie uz", "ru": "Cookie ru", "en": "Cookie en"},
+        )
+
+        response = self.client.get(reverse("pages:site-settings"))
+
+        self.assertEqual(response.data["address"], {"uz": "Manzil", "ru": "Адрес", "en": "Address"})
+        self.assertEqual(response.data["work_hours"], {"uz": "9-18", "ru": "9-18", "en": "9-18"})
+        self.assertEqual(
+            response.data["cookie_notice_text"], {"uz": "Cookie uz", "ru": "Cookie ru", "en": "Cookie en"}
+        )
+
 
 class StaticPageDetailViewTests(APITestCase):
     def test_returns_page_by_slug(self):
