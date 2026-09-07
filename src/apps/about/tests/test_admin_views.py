@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps._auth.models import User
-from apps.about.models import Factory, ProductInfo, Stat
+from apps.about.models import Factory, HomeSlide, ProductInfo, Stat
 
 
 class StatAdminCrudTests(APITestCase):
@@ -129,4 +129,63 @@ class ProductInfoAdminCrudTests(APITestCase):
     def test_non_admin_forbidden(self):
         self.client.force_authenticate(User.objects.create_user(username="visitor4", password="pass12345"))
         response = self.client.get(reverse("about-admin:product-info-admin-list"))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class HomeSlideAdminCrudTests(APITestCase):
+    def setUp(self):
+        self.admin = User.objects.create_user(username="slide-admin", password="pass12345", is_staff=True)
+        self.client.force_authenticate(self.admin)
+
+    def test_create_list_update_delete_flow(self):
+        create_response = self.client.post(
+            reverse("about-admin:home-slide-admin-list"),
+            data={
+                "title": {"uz": "Sarlavha", "ru": "Заголовок", "en": "Title"},
+                "image": "slide.jpg",
+            },
+            format="json",
+        )
+        self.assertEqual(create_response.status_code, status.HTTP_201_CREATED, create_response.data)
+        slide_id = create_response.data["id"]
+
+        list_response = self.client.get(reverse("about-admin:home-slide-admin-list"))
+        self.assertEqual(list_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(list_response.data), 1)
+
+        update_response = self.client.put(
+            reverse("about-admin:home-slide-admin-detail", kwargs={"pk": slide_id}),
+            data={
+                "title": {"uz": "Yangi", "ru": "Новый", "en": "New"},
+                "image": "slide-new.jpg",
+            },
+            format="json",
+        )
+        self.assertEqual(update_response.status_code, status.HTTP_200_OK, update_response.data)
+        self.assertEqual(HomeSlide.objects.get(pk=slide_id).image, "slide-new.jpg")
+
+        delete_response = self.client.delete(reverse("about-admin:home-slide-admin-detail", kwargs={"pk": slide_id}))
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(HomeSlide.objects.filter(pk=slide_id).exists())
+
+    def test_patch_single_locale_tab_does_not_wipe_other_locales(self):
+        """Regression test: admin form submits one locale tab (e.g. only "uz") per request."""
+        slide = HomeSlide.objects.create(
+            title={"uz": "Sarlavha", "ru": "Заголовок", "en": "Title"},
+            image="slide.jpg",
+        )
+
+        response = self.client.patch(
+            reverse("about-admin:home-slide-admin-detail", kwargs={"pk": slide.pk}),
+            data={"title": {"uz": "Yangilangan"}},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        slide.refresh_from_db()
+        self.assertEqual(slide.title, {"uz": "Yangilangan", "ru": "Заголовок", "en": "Title"})
+
+    def test_non_admin_forbidden(self):
+        self.client.force_authenticate(User.objects.create_user(username="visitor5", password="pass12345"))
+        response = self.client.get(reverse("about-admin:home-slide-admin-list"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
