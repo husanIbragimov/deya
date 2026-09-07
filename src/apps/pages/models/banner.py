@@ -17,10 +17,10 @@ class Banner(BaseModel):
         help_text=choices_help_text(BannerTypeChoice),
     )
     title = models.JSONField(default=dict, verbose_name=_(T.title))
-    subtitle = models.JSONField(default=dict, blank=True, verbose_name=_(T.subtitle))
+    subtitle = models.JSONField(default=dict, null=True, blank=True, verbose_name=_(T.subtitle))
     image = models.CharField(max_length=500, verbose_name=_(T.image))
-    cta_label = models.JSONField(default=dict, blank=True, verbose_name=_(T.cta_label))
-    cta_url = models.URLField(blank=True, verbose_name=_(T.cta_url))
+    cta_label = models.JSONField(null=True, blank=True, default=None, verbose_name=_(T.cta_label))
+    cta_url = models.URLField(null=True, blank=True, verbose_name=_(T.cta_url))
 
     class Meta:
         ordering = ("id",)

@@ -6,3 +6,4 @@ from apps.common.locale import getTextLazy as _
 
 class BannerTypeChoice(models.TextChoices):
     PARTNER = "partner", _(T.banner_type_partner)
+    MAIN = "main", _(T.banner_main)

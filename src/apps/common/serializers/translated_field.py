@@ -39,6 +39,9 @@ class TranslatedJSONField(serializers.JSONField):
         if not isinstance(value, dict):
             self.fail("not_a_dict")
 
+        if not value and not self.required:
+            return None if self.allow_null else {}
+
         allowed = set(self.languages)
         provided = set(value.keys())
         is_partial = bool(getattr(self.parent, "partial", False))

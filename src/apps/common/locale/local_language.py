@@ -149,6 +149,7 @@ class TranslatableText(Enum):
     banners = _("banners")
     banner_type = _("banner type")
     banner_type_partner = _("partner")
+    banner_main = _("main")
 
     # leads
     lead = _("lead")
