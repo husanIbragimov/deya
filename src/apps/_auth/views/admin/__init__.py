@@ -1,3 +1,3 @@
-from .user_admin_view import UserAdminCreateView
+from .user_admin_view import UserAdminCreateView, UserAdminSetPasswordView
 
-__all__ = ["UserAdminCreateView"]
+__all__ = ["UserAdminCreateView", "UserAdminSetPasswordView"]
