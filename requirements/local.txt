@@ -9,3 +9,6 @@
 # Postgres
 
 #Celery monitoring
+
+# Debugging
+django-debug-toolbar==8.0.0

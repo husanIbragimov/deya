@@ -6,6 +6,7 @@ from .templates import *
 from .conf import *
 from .db import *
 from .cache import *
+from .celery_conf import *
 from .email import *
 from .locale import *
 from .log import *
