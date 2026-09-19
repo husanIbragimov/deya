@@ -9,3 +9,5 @@ class BannerTypeChoice(models.TextChoices):
     ABOUT = "about", _(T.banner_about)
     CARRIER = "carrier", _(T.banner_carrier)
     PARTNER = "partner", _(T.banner_partner)
+    SUB_MAIN = "sub_main", _(T.sub_main)
+    SUB_MAIN_MAP = "sub_main_map", _(T.sub_main_map)

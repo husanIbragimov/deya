@@ -96,6 +96,7 @@ services:
 #        hard: 65536
 
   celery:
+    restart: unless-stopped
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -114,6 +115,7 @@ services:
       - ./../.envs/.env
 
   nginx:
+    restart: unless-stopped
     image: nginx:1.27
     depends_on:
       - web

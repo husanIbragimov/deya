@@ -7,23 +7,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = Env()
 env.read_env(f"{BASE_DIR.parent}/.envs/.env")
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=['http://localhost:8000'])
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=['http://localhost:8000'])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:8000"])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["http://localhost:8000"])
 
-SECRET_KEY = env.str('SECRET_KEY', 'django-insecure')
-DEBUG = env.bool('DEBUG') == 'True'
+SECRET_KEY = env.str("SECRET_KEY", "django-insecure")
+DEBUG = env.bool("DEBUG") == "True"
 
-KAFKA_SERVERS = env.str('KAFKA_SERVERS')
+KAFKA_SERVERS = env.str("KAFKA_SERVERS")
 
 # TELEGRAM BOT ALERT
-BOT_TOKEN = env.str('BOT_TOKEN')
-ADMIN_CHAT_ID = env.str('ADMIN_CHAT_ID')
-THREAD_ID = env.str('THREAD_ID')
-PRODUCTION = env.str('PRODUCTION', 'False') == 'True'
+BOT_TOKEN = env.str("BOT_TOKEN")
+ADMIN_CHAT_ID = env.str("ADMIN_CHAT_ID")
+THREAD_ID = env.str("THREAD_ID")
+PRODUCTION = env.str("PRODUCTION", "False") == "True"
 
 CRONITOR_API_KEY = env.str("CRONITOR_API_KEY")
 SENTRY_DSN = env.str("SENTRY_DSN")
 
 TITLE = env.str("TITLE", "Django Project API")
 DESCRIPTION = env.str("DESCRIPTION", "Django Project API Documentation")
+
+# Public base URL of this backend, used to build absolute links (e.g. newsletter unsubscribe) in emails
+SITE_URL = env.str("SITE_URL", "https://api.deya.uz")
+
+# Email / SMTP (blog newsletter, etc.)
+EMAIL_HOST = env.str("EMAIL_HOST", "")
+EMAIL_PORT = env.int("EMAIL_PORT", 587)
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", True)
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", "Deya <info@deya.uz>")
