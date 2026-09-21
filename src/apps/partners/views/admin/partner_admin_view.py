@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema
 
 from apps.common.base_api import AdminDetailAPI, AdminListCreateAPI
+from apps.common.pagination import PageNumberPagination
 from apps.partners.models import Partner
 from apps.partners.serializers.admin import PartnerAdminSerializer
 
@@ -9,6 +10,7 @@ from apps.partners.serializers.admin import PartnerAdminSerializer
 class PartnerAdminListCreateView(AdminListCreateAPI):
     queryset = Partner.objects.all().order_by("name")
     serializer_class = PartnerAdminSerializer
+    pagination_class = PageNumberPagination
 
 
 @extend_schema(tags=["Partners Admin"])

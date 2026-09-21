@@ -17,7 +17,7 @@ class LeadAdminViewTests(APITestCase):
     def test_list(self):
         response = self.client.get(reverse("leads-admin:lead-admin-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_retrieve(self):
         response = self.client.get(reverse("leads-admin:lead-admin-detail", kwargs={"pk": self.lead.pk}))

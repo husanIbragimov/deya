@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from apps.common.base_api import BaseGenericUpdateAPI
+from apps.common.pagination import PageNumberPagination
 from apps.leads.selectors import admin_leads
 from apps.leads.serializers.admin import LeadAdminSerializer, LeadStatusUpdateSerializer
 
@@ -13,6 +14,7 @@ from apps.leads.serializers.admin import LeadAdminSerializer, LeadStatusUpdateSe
 class LeadAdminListView(ListAPIView):
     serializer_class = LeadAdminSerializer
     permission_classes = (IsAdminUser,)
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         return admin_leads()

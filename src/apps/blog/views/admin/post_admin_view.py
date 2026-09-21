@@ -6,12 +6,14 @@ from apps.blog.models import Post
 from apps.blog.serializers.admin import PostAdminSerializer
 from apps.blog.tasks import sendBlogNewsletterTask
 from apps.common.base_api import AdminDetailAPI, AdminListCreateAPI
+from apps.common.pagination import PageNumberPagination
 
 
 @extend_schema(tags=["Blog Admin"])
 class PostAdminListCreateView(AdminListCreateAPI):
     queryset = Post.objects.all().order_by("-published_at")
     serializer_class = PostAdminSerializer
+    pagination_class = PageNumberPagination
 
     def post(self, request, *args, **kwargs):
         instance = self.serializer.save(created_by=request.user)
