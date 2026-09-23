@@ -11,3 +11,4 @@ class BannerTypeChoice(models.TextChoices):
     PARTNER = "partner", _(T.banner_partner)
     SUB_MAIN = "sub_main", _(T.sub_main)
     SUB_MAIN_MAP = "sub_main_map", _(T.sub_main_map)
+    ABOUT_TITLE = "about_title", _(T.about_title)

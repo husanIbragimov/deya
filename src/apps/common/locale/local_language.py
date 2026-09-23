@@ -154,6 +154,7 @@ class TranslatableText(Enum):
     banner_main = _("main")
     sub_main = _("sub main")
     sub_main_map = _("sub main map")
+    about_title = _("about title")
 
     # leads
     lead = _("lead")
