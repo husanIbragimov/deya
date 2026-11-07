@@ -26,6 +26,13 @@ class ProductListSerializer(serializers.ModelSerializer):
         return ProductImageSerializer(image, context=self.context).data
 
 
+class ProductVariantSerializer(ProductListSerializer):
+    weights = WeightSerializer(many=True, read_only=True)
+
+    class Meta(ProductListSerializer.Meta):
+        fields = ProductListSerializer.Meta.fields + ("weights",)
+
+
 class ProductDetailSerializer(serializers.ModelSerializer):
     name = TranslatedField()
     description = TranslatedField()
@@ -57,4 +64,4 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     def get_variants(self, obj):
         from apps.catalog.selectors import get_family_variants
 
-        return ProductListSerializer(get_family_variants(obj), many=True, context=self.context).data
+        return ProductVariantSerializer(get_family_variants(obj), many=True, context=self.context).data

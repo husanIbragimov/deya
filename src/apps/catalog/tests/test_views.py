@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.catalog.models import Category, Product, ProductFamily
+from apps.catalog.models import Category, Product, ProductFamily, Weight
 from apps.catalog.tests.helpers import tr
 
 
@@ -77,6 +77,23 @@ class ProductDetailViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["variants"]), 1)
         self.assertEqual(response.data["variants"][0]["slug"], "ketler-raspberry")
+
+    def test_detail_variants_include_weights(self):
+        category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
+        family = ProductFamily.objects.create(name="Ketler", slug="ketler")
+        small = Weight.objects.create(value="45.00", unit="g")
+        large = Weight.objects.create(value="90.00", unit="g")
+        product = make_product(category, "Ketler 45g", family=family, slug="ketler-45", code="W1")
+        product.weights.add(small)
+        sibling = make_product(category, "Ketler 90g", family=family, slug="ketler-90", code="W2")
+        sibling.weights.add(large)
+
+        response = self.client.get(reverse("catalog:product-detail", kwargs={"slug": product.slug}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        variant = response.data["variants"][0]
+        self.assertEqual(variant["slug"], "ketler-90")
+        self.assertEqual(variant["weights"], [{"id": large.id, "value": "90.00", "unit": "g"}])
 
 
 class ProductRelatedViewTests(APITestCase):
