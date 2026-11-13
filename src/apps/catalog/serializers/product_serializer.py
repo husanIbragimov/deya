@@ -27,10 +27,10 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 
 class ProductVariantSerializer(ProductListSerializer):
-    weights = WeightSerializer(many=True, read_only=True)
+    weight = WeightSerializer(read_only=True)
 
     class Meta(ProductListSerializer.Meta):
-        fields = ProductListSerializer.Meta.fields + ("weights",)
+        fields = ProductListSerializer.Meta.fields + ("weight",)
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     flavor = FlavorSerializer(read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
-    weights = WeightSerializer(many=True, read_only=True)
+    weight = WeightSerializer(read_only=True)
     variants = serializers.SerializerMethodField()
 
     class Meta:
@@ -57,7 +57,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "badge",
             "is_featured",
             "images",
-            "weights",
+            "weight",
             "variants",
         )
 

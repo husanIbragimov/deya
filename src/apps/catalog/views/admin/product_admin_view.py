@@ -8,12 +8,14 @@ from apps.common.pagination import PageNumberPagination
 
 @extend_schema(tags=["Catalog Admin"])
 class ProductAdminListCreateView(AdminListCreateAPI):
-    queryset = Product.objects.select_related("category", "family", "flavor").all().order_by("sort_order", "id")
+    queryset = (
+        Product.objects.select_related("category", "family", "flavor", "weight").all().order_by("sort_order", "id")
+    )
     serializer_class = ProductAdminSerializer
     pagination_class = PageNumberPagination
 
 
 @extend_schema(tags=["Catalog Admin"])
 class ProductAdminDetailView(AdminDetailAPI):
-    queryset = Product.objects.select_related("category", "family", "flavor").all()
+    queryset = Product.objects.select_related("category", "family", "flavor", "weight").all()
     serializer_class = ProductAdminSerializer

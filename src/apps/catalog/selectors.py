@@ -10,8 +10,8 @@ def active_categories() -> QuerySet[Category]:
 def product_base_queryset() -> QuerySet[Product]:
     return (
         Product.objects.filter(is_active=True)
-        .select_related("category", "family", "flavor")
-        .prefetch_related("images", "weights")
+        .select_related("category", "family", "flavor", "weight")
+        .prefetch_related("images")
     )
 
 
@@ -26,14 +26,19 @@ def featured_products(limit: int = 4) -> QuerySet[Product]:
 def get_family_variants(product: Product) -> QuerySet[Product]:
     if not product.family_id:
         return Product.objects.none()
-    return product_base_queryset().filter(family_id=product.family_id).exclude(pk=product.pk)
+    return (
+        product_base_queryset()
+        .filter(family_id=product.family_id)
+        .exclude(pk=product.pk)
+        .order_by("flavor__sort_order", "flavor_id", "weight__unit", "weight__value", "sort_order", "id")
+    )
 
 
 def get_related_products(product: Product) -> QuerySet[Product]:
     related = (
         product.related_products.filter(is_active=True)
-        .select_related("category", "family", "flavor")
-        .prefetch_related("images", "weights")
+        .select_related("category", "family", "flavor", "weight")
+        .prefetch_related("images")
     )
     if related.exists():
         return related

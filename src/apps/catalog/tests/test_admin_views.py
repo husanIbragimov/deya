@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps._auth.models import User
-from apps.catalog.models import Category
+from apps.catalog.models import Category, Flavor, ProductFamily, Weight
 
 
 class CategoryAdminPermissionTests(APITestCase):
@@ -65,3 +65,70 @@ class CategoryAdminCrudTests(APITestCase):
         delete_response = self.client.delete(detail_url)
         self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Category.objects.filter(pk=category_id).exists())
+
+
+class ProductVariantAdminTests(APITestCase):
+    def setUp(self):
+        self.admin = User.objects.create_user(username="admin", password="pass12345", is_staff=True)
+        self.client.force_authenticate(self.admin)
+        self.category = Category.objects.create(name={"ru": "Круассаны"}, slug="croissants", image="c.jpg")
+        self.family = ProductFamily.objects.create(name="Ketler", slug="ketler")
+        self.flavor = Flavor.objects.create(name={"ru": "Шоколад"}, slug="choco")
+        self.small = Weight.objects.create(value="45.00", unit="g")
+        self.large = Weight.objects.create(value="90.00", unit="g")
+
+    def _payload(self, code, weight):
+        return {
+            "category": self.category.pk,
+            "family": self.family.pk,
+            "flavor": self.flavor.pk,
+            "weight": weight.pk,
+            "name": {"uz": code, "ru": code, "en": code},
+            "slug": code.lower(),
+            "code": code,
+            "box_weight": "1.500",
+            "shelf_life_months": 6,
+        }
+
+    def test_same_flavor_different_weights_are_separate_variants(self):
+        url = reverse("catalog-admin:product-admin-list")
+
+        first = self.client.post(url, data=self._payload("K45", self.small), format="json")
+        second = self.client.post(url, data=self._payload("K90", self.large), format="json")
+
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED, first.data)
+        self.assertEqual(second.status_code, status.HTTP_201_CREATED, second.data)
+        self.assertEqual(second.data["weight"], self.large.pk)
+
+    def test_duplicate_flavor_and_weight_in_family_is_rejected(self):
+        url = reverse("catalog-admin:product-admin-list")
+        self.client.post(url, data=self._payload("K45", self.small), format="json")
+
+        response = self.client.post(url, data=self._payload("K45B", self.small), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+
+    def test_update_keeping_own_flavor_and_weight_is_allowed(self):
+        url = reverse("catalog-admin:product-admin-list")
+        created = self.client.post(url, data=self._payload("K45", self.small), format="json")
+
+        response = self.client.patch(
+            reverse("catalog-admin:product-admin-detail", kwargs={"pk": created.data["id"]}),
+            data={"weight": self.small.pk, "sort_order": 3},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+    def test_patch_to_taken_weight_is_rejected(self):
+        url = reverse("catalog-admin:product-admin-list")
+        self.client.post(url, data=self._payload("K45", self.small), format="json")
+        other = self.client.post(url, data=self._payload("K90", self.large), format="json")
+
+        response = self.client.patch(
+            reverse("catalog-admin:product-admin-detail", kwargs={"pk": other.data["id"]}),
+            data={"weight": self.small.pk},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)

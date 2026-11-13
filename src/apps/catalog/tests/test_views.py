@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.catalog.models import Category, Product, ProductFamily, Weight
+from apps.catalog.models import Category, Flavor, Product, ProductFamily, Weight
 from apps.catalog.tests.helpers import tr
 
 
@@ -78,22 +78,49 @@ class ProductDetailViewTests(APITestCase):
         self.assertEqual(len(response.data["variants"]), 1)
         self.assertEqual(response.data["variants"][0]["slug"], "ketler-raspberry")
 
-    def test_detail_variants_include_weights(self):
+    def test_detail_variants_include_flavor_and_weight(self):
         category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
         family = ProductFamily.objects.create(name="Ketler", slug="ketler")
         small = Weight.objects.create(value="45.00", unit="g")
         large = Weight.objects.create(value="90.00", unit="g")
-        product = make_product(category, "Ketler 45g", family=family, slug="ketler-45", code="W1")
-        product.weights.add(small)
-        sibling = make_product(category, "Ketler 90g", family=family, slug="ketler-90", code="W2")
-        sibling.weights.add(large)
+        product = make_product(category, "Ketler 45g", family=family, weight=small, slug="ketler-45", code="W1")
+        make_product(category, "Ketler 90g", family=family, weight=large, slug="ketler-90", code="W2")
 
         response = self.client.get(reverse("catalog:product-detail", kwargs={"slug": product.slug}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["weight"], {"id": small.id, "value": "45.00", "unit": "g"})
         variant = response.data["variants"][0]
         self.assertEqual(variant["slug"], "ketler-90")
-        self.assertEqual(variant["weights"], [{"id": large.id, "value": "90.00", "unit": "g"}])
+        self.assertEqual(variant["weight"], {"id": large.id, "value": "90.00", "unit": "g"})
+        self.assertIn("flavor", variant)
+
+    def test_variants_are_ordered_by_flavor_then_weight(self):
+        category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
+        family = ProductFamily.objects.create(name="Ketler", slug="ketler")
+        choco = Flavor.objects.create(name=tr("Шоколад"), slug="choco", sort_order=1)
+        berry = Flavor.objects.create(name=tr("Малина"), slug="berry", sort_order=2)
+        small = Weight.objects.create(value="45.00", unit="g")
+        large = Weight.objects.create(value="90.00", unit="g")
+        current = make_product(category, "c45", family=family, flavor=choco, weight=small, slug="c45", code="V1")
+        make_product(category, "b90", family=family, flavor=berry, weight=large, slug="b90", code="V2")
+        make_product(category, "b45", family=family, flavor=berry, weight=small, slug="b45", code="V3")
+        make_product(category, "c90", family=family, flavor=choco, weight=large, slug="c90", code="V4")
+
+        response = self.client.get(reverse("catalog:product-detail", kwargs={"slug": current.slug}))
+
+        self.assertEqual([v["slug"] for v in response.data["variants"]], ["c90", "b45", "b90"])
+
+    def test_list_filters_by_weight(self):
+        category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
+        small = Weight.objects.create(value="45.00", unit="g")
+        large = Weight.objects.create(value="90.00", unit="g")
+        make_product(category, "a", weight=small, slug="a", code="F1")
+        make_product(category, "b", weight=large, slug="b", code="F2")
+
+        response = self.client.get(reverse("catalog:product-list"), {"weight": large.pk})
+
+        self.assertEqual([item["slug"] for item in response.data["results"]], ["b"])
 
 
 class ProductRelatedViewTests(APITestCase):

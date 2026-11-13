@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
 from apps.catalog.models import Product
+from apps.common.locale import TranslatableText as T
+from apps.common.locale import getTextLazy as _
 from apps.common.serializers import TranslatedJSONField
 
 
@@ -21,7 +23,7 @@ class ProductAdminSerializer(serializers.ModelSerializer):
             "code",
             "box_weight",
             "shelf_life_months",
-            "weights",
+            "weight",
             "badge",
             "is_featured",
             "related_products",
@@ -31,3 +33,20 @@ class ProductAdminSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = ("id", "created_at", "updated_at")
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+
+        def current(field):
+            if field in attrs:
+                return attrs[field]
+            return getattr(self.instance, field, None)
+
+        family = current("family")
+        if family is not None:
+            duplicates = Product.objects.filter(family=family, flavor=current("flavor"), weight=current("weight"))
+            if self.instance is not None:
+                duplicates = duplicates.exclude(pk=self.instance.pk)
+            if duplicates.exists():
+                raise serializers.ValidationError({"weight": str(_(T.product_variant_exists_message))})
+        return attrs

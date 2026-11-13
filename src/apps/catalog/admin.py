@@ -54,10 +54,11 @@ class ProductFamilyAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(JSONWidgetAdminMixin, admin.ModelAdmin):
-    list_display = ("id", "code", "slug", "category", "family", "flavor", "badge", "is_featured", "is_active")
-    list_filter = ("category", "family", "flavor", "badge", "is_featured", "is_active")
+    list_display = ("id", "code", "slug", "category", "family", "flavor", "weight", "badge", "is_featured", "is_active")
+    list_filter = ("category", "family", "flavor", "weight", "badge", "is_featured", "is_active")
     list_editable = ("is_featured", "is_active")
     search_fields = ("code", "name__ru", "name__en", "slug")
-    filter_horizontal = ("weights", "related_products")
+    filter_horizontal = ("related_products",)
     autocomplete_fields = ("category", "family", "flavor")
+    list_select_related = ("category", "family", "flavor", "weight")
     inlines = [ProductImageInline]

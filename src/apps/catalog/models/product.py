@@ -33,7 +33,9 @@ class Product(BaseModel):
     code = models.CharField(max_length=32, unique=True, verbose_name=_(T.code))
     box_weight = models.DecimalField(max_digits=8, decimal_places=3, verbose_name=_(T.box_weight))
     shelf_life_months = models.PositiveSmallIntegerField(verbose_name=_(T.shelf_life_months))
-    weights = models.ManyToManyField(Weight, blank=True, related_name="products", verbose_name=_(T.weights))
+    weight = models.ForeignKey(
+        Weight, on_delete=models.SET_NULL, null=True, blank=True, related_name="products", verbose_name=_(T.weight)
+    )
     badge = models.CharField(
         max_length=16,
         choices=ProductBadgeChoice.choices,
@@ -53,6 +55,13 @@ class Product(BaseModel):
         ordering = ("sort_order", "id")
         verbose_name = _(T.product)
         verbose_name_plural = _(T.products)
+        constraints = [
+            models.UniqueConstraint(
+                fields=("family", "flavor", "weight"),
+                condition=models.Q(family__isnull=False),
+                name="unique_product_family_flavor_weight",
+            ),
+        ]
         indexes = [
             models.Index(fields=("category", "is_active", "sort_order")),
             models.Index(fields=("badge",)),

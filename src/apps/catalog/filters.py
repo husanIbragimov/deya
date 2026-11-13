@@ -9,7 +9,7 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ("category", "badge", "family")
+        fields = ("category", "badge", "family", "flavor", "weight")
 
     def filter_search(self, queryset, name, value):
         return queryset.filter(

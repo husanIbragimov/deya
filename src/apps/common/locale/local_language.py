@@ -179,3 +179,4 @@ class TranslatableText(Enum):
     consent_personal_data_required = _("You must consent to personal data processing.")
     unsubscribe_token_invalid_message = _("This unsubscribe link is invalid or has already been used.")
     factory_already_exists_message = _("Factory record already exists. Use PUT or PATCH to update it.")
+    product_variant_exists_message = _("A product with this flavor and weight already exists in this family.")
