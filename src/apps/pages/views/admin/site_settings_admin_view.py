@@ -1,8 +1,8 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from apps.common.base_api import BaseGenericUpdateAPI
+from apps.common.permissions import IsAdminUser
 from apps.pages.selectors import get_site_settings
 from apps.pages.serializers.admin import SiteSettingsAdminSerializer
 

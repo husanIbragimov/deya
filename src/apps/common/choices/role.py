@@ -7,3 +7,4 @@ from apps.common.locale import getTextLazy as _
 class UserRoleChoice(models.IntegerChoices):
     ADMIN = 0, _(T.admin)
     USER = 1, _(T.user)
+    SYSTEM_ADMIN = 3, _(T.system_admin)

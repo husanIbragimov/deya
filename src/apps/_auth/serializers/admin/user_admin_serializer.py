@@ -1,6 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
+from apps._auth.managers.user_manager import HIDDEN_ROLES
 from apps._auth.models import User
 
 
@@ -13,6 +14,12 @@ class UserAdminCreateSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "username", "first_name", "last_name", "password", "role", "date_joined"]
         read_only_fields = ["id", "date_joined"]
+
+    def validate_role(self, value):
+        # Hidden roles (e.g. SYSTEM_ADMIN) can only be assigned via Django admin.
+        if value in HIDDEN_ROLES:
+            raise serializers.ValidationError("This role cannot be assigned via the API.")
+        return value
 
     def validate_password(self, value):
         validate_password(value)

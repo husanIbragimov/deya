@@ -1,6 +1,5 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from apps.about.models import Factory
@@ -9,6 +8,7 @@ from apps.about.serializers.admin import FactoryAdminSerializer
 from apps.common.base_api import BaseGenericUpdateAPI
 from apps.common.locale import TranslatableText as T
 from apps.common.locale import getTextLazy as _
+from apps.common.permissions import IsAdminUser
 from apps.common.response import ExceptionResponse, ResponseCode
 
 

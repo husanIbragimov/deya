@@ -1,7 +1,16 @@
 from django.contrib.auth.base_user import BaseUserManager
 
+from apps.common.choices import UserRoleChoice
+
+# Roles whose users are never exposed through the API (lists, lookups by pk, ...).
+HIDDEN_ROLES = (UserRoleChoice.SYSTEM_ADMIN,)
+
 
 class UserManager(BaseUserManager):
+    def visible(self):
+        """Users that may appear in the API: excludes superusers and hidden roles."""
+        return self.get_queryset().filter(is_superuser=False).exclude(role__in=HIDDEN_ROLES)
+
     def _create_user(self, username: str, password: str, **extra_fields):
         if not username:
             raise ValueError("The given phone number must be set")

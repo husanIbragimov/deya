@@ -33,6 +33,7 @@ class UserAdminSetPasswordView(BaseGenericAPI):
     permission_classes = (IsAuthenticated, IsAdminRole)
 
     def post(self, request, *args, **kwargs):
-        target_user = get_object_or_404(User, pk=kwargs["pk"])
+        # Superusers and SYSTEM_ADMIN users are hidden from the API.
+        target_user = get_object_or_404(User.objects.visible(), pk=kwargs["pk"])
         AuthService.set_password(target_user, self.validate_data["password"])
         return Response({"detail": "Password successfully changed."}, status=status.HTTP_200_OK)

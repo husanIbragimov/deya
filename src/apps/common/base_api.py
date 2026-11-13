@@ -3,9 +3,10 @@ from typing import Type
 
 from rest_framework import mixins, status
 from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
+
+from apps.common.permissions import IsAdminUser
 
 
 class _BaseAPI(GenericAPIView, ABC):

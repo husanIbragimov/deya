@@ -17,3 +17,5 @@ class UserMeSerializer(serializers.ModelSerializer):
             "role_display",
             "date_joined",
         ]
+        # A user must never be able to change their own role (privilege escalation).
+        read_only_fields = ["id", "role", "date_joined"]

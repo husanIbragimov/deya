@@ -7,6 +7,7 @@ class TranslatableText(Enum):
     # roles
     admin = _("Admin")
     user = _("User")
+    system_admin = _("System admin")
 
     # status
     in_progress = _("In progress")

@@ -87,3 +87,28 @@ class AdminSetPasswordViewTests(APITestCase):
         response = self.client.post(url, data={"password": "New-Strong-Pass-1"})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_admin_cannot_set_superuser_password(self):
+        superuser = User.objects.create_superuser(username="super", password="Super-Pass-123")
+        admin = User.objects.create_user(username="root-admin", password="Old-Pass-123", role=UserRoleChoice.ADMIN)
+        self.client.force_authenticate(admin)
+        url = reverse("user-admin:user-admin-set-password", kwargs={"pk": superuser.pk})
+
+        response = self.client.post(url, data={"password": "New-Strong-Pass-1"})
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        superuser.refresh_from_db()
+        self.assertTrue(superuser.check_password("Super-Pass-123"))
+
+
+class SuperuserLoginTests(APITestCase):
+    def test_superuser_can_login_via_api(self):
+        User.objects.create_superuser(username="super", password="Super-Pass-123")
+
+        response = self.client.post(
+            reverse("auth:login_view"), data={"username": "super", "password": "Super-Pass-123"}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
