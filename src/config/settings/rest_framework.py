@@ -4,10 +4,10 @@ from .env import SECRET_KEY
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+        # JWT must be first: DRF builds the 401 `WWW-Authenticate` header from the first class.
+        # With BasicAuthentication first it was `Basic realm="api"`, which makes browsers show a native login popup.
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "apps.common.schema.CustomAutoSchema",
     # 'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
