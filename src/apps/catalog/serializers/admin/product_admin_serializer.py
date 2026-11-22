@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.catalog.models import Product
+from apps.catalog.serializers.admin.box_quantity_validation import validate_box_quantity
 from apps.common.locale import TranslatableText as T
 from apps.common.locale import getTextLazy as _
 from apps.common.serializers import TranslatedJSONField
@@ -22,6 +23,8 @@ class ProductAdminSerializer(serializers.ModelSerializer):
             "description",
             "code",
             "box_weight",
+            "box_quantity",
+            "box_quantity_unit",
             "shelf_life_months",
             "weight",
             "badge",
@@ -41,6 +44,8 @@ class ProductAdminSerializer(serializers.ModelSerializer):
             if field in attrs:
                 return attrs[field]
             return getattr(self.instance, field, None)
+
+        validate_box_quantity(current("box_quantity"), current("box_quantity_unit"))
 
         family = current("family")
         if family is not None:

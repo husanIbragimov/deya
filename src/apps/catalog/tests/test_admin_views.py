@@ -67,7 +67,7 @@ class CategoryAdminCrudTests(APITestCase):
         self.assertFalse(Category.objects.filter(pk=category_id).exists())
 
 
-class ProductVariantAdminTests(APITestCase):
+class ProductAdminTestBase(APITestCase):
     def setUp(self):
         self.admin = User.objects.create_user(username="admin", password="pass12345", is_staff=True)
         self.client.force_authenticate(self.admin)
@@ -90,6 +90,8 @@ class ProductVariantAdminTests(APITestCase):
             "shelf_life_months": 6,
         }
 
+
+class ProductVariantAdminTests(ProductAdminTestBase):
     def test_same_flavor_different_weights_are_separate_variants(self):
         url = reverse("catalog-admin:product-admin-list")
 
@@ -128,6 +130,54 @@ class ProductVariantAdminTests(APITestCase):
         response = self.client.patch(
             reverse("catalog-admin:product-admin-detail", kwargs={"pk": other.data["id"]}),
             data={"weight": self.small.pk},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+
+
+class BoxQuantityAdminTests(ProductAdminTestBase):
+    def test_product_create_saves_box_quantity(self):
+        payload = {**self._payload("K45", self.small), "box_quantity": "24", "box_quantity_unit": "pcs"}
+
+        response = self.client.post(reverse("catalog-admin:product-admin-list"), data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.data["box_quantity"], "24.000")
+        self.assertEqual(response.data["box_quantity_unit"], "pcs")
+
+    def test_product_box_quantity_without_unit_is_rejected(self):
+        payload = {**self._payload("K45", self.small), "box_quantity": "5.5"}
+
+        response = self.client.post(reverse("catalog-admin:product-admin-list"), data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+
+    def test_product_unit_without_box_quantity_is_rejected(self):
+        payload = {**self._payload("K45", self.small), "box_quantity_unit": "kg"}
+
+        response = self.client.post(reverse("catalog-admin:product-admin-list"), data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+
+    def test_family_create_saves_box_quantity(self):
+        response = self.client.post(
+            reverse("catalog-admin:product-family-admin-list"),
+            data={"name": "Choco", "slug": "choco", "box_quantity": "5.5", "box_quantity_unit": "kg"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.data["box_quantity"], "5.500")
+        self.assertEqual(response.data["box_quantity_unit"], "kg")
+
+    def test_family_patch_clearing_only_quantity_is_rejected(self):
+        self.family.box_quantity, self.family.box_quantity_unit = "12", "pcs"
+        self.family.save()
+
+        response = self.client.patch(
+            reverse("catalog-admin:product-family-admin-detail", kwargs={"pk": self.family.pk}),
+            data={"box_quantity": None},
             format="json",
         )
 

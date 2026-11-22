@@ -66,6 +66,47 @@ class ProductListViewTests(APITestCase):
 
 
 class ProductDetailViewTests(APITestCase):
+    def _detail(self, product):
+        return self.client.get(reverse("catalog:product-detail", kwargs={"slug": product.slug}))
+
+    def test_detail_box_quantity_falls_back_to_family(self):
+        category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
+        family = ProductFamily.objects.create(name="Ketler", slug="ketler", box_quantity="12", box_quantity_unit="pcs")
+        product = make_product(category, "Ketler choco", family=family, slug="ketler-choco", code="Q1")
+
+        response = self._detail(product)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["box_quantity"], "12.000")
+        self.assertEqual(response.data["box_quantity_unit"], "pcs")
+
+    def test_detail_variant_box_quantity_overrides_family(self):
+        category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
+        family = ProductFamily.objects.create(name="Ketler", slug="ketler", box_quantity="12", box_quantity_unit="pcs")
+        product = make_product(
+            category,
+            "Ketler choco",
+            family=family,
+            slug="ketler-choco",
+            code="Q1",
+            box_quantity="5.5",
+            box_quantity_unit="kg",
+        )
+
+        response = self._detail(product)
+
+        self.assertEqual(response.data["box_quantity"], "5.500")
+        self.assertEqual(response.data["box_quantity_unit"], "kg")
+
+    def test_detail_box_quantity_empty_when_not_set(self):
+        category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
+        product = make_product(category, "Solo", slug="solo", code="Q3")
+
+        response = self._detail(product)
+
+        self.assertIsNone(response.data["box_quantity"])
+        self.assertEqual(response.data["box_quantity_unit"], "")
+
     def test_detail_includes_family_variants(self):
         category = Category.objects.create(name=tr("Круассаны"), slug="croissants", image="c.jpg")
         family = ProductFamily.objects.create(name="Ketler", slug="ketler")

@@ -14,3 +14,8 @@ class ProductBadgeChoice(models.TextChoices):
 class WeightUnitChoice(models.TextChoices):
     GRAM = "g", _(T.gram)
     KILOGRAM = "kg", _(T.kilogram)
+
+
+class BoxQuantityUnitChoice(models.TextChoices):
+    KILOGRAM = "kg", _(T.kilogram)
+    PIECE = "pcs", _(T.piece)

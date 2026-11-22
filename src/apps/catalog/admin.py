@@ -47,7 +47,7 @@ class WeightAdmin(admin.ModelAdmin):
 
 @admin.register(ProductFamily)
 class ProductFamilyAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "slug")
+    list_display = ("id", "name", "slug", "box_quantity", "box_quantity_unit")
     search_fields = ("name", "slug")
     prepopulated_fields = {"slug": ("name",)}
 

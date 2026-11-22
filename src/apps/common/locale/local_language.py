@@ -64,6 +64,10 @@ class TranslatableText(Enum):
     description = _("description")
     code = _("code")
     box_weight = _("box weight")
+    box_quantity = _("quantity per box")
+    box_quantity_unit = _("quantity per box unit")
+    box_quantity_unit_required_message = _("Unit is required when quantity per box is set.")
+    box_quantity_required_message = _("Quantity per box is required when unit is set.")
     shelf_life_months = _("shelf life (months)")
     badge = _("badge")
     badge_new = _("new")
@@ -77,6 +81,7 @@ class TranslatableText(Enum):
     is_main = _("is main")
     gram = _("gram")
     kilogram = _("kilogram")
+    piece = _("piece")
 
     # blog
     post = _("post")

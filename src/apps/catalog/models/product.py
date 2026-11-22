@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.catalog.choices import ProductBadgeChoice
+from apps.catalog.models.box_quantity import BoxQuantityMixin, box_quantity_constraint
 from apps.catalog.models.category import Category
 from apps.catalog.models.flavor import Flavor
 from apps.catalog.models.product_family import ProductFamily
@@ -12,7 +13,7 @@ from apps.common.models import BaseModel
 from apps.common.utils.translated_value import translated_value
 
 
-class Product(BaseModel):
+class Product(BoxQuantityMixin, BaseModel):
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name="products", verbose_name=_(T.category)
     )
@@ -61,12 +62,27 @@ class Product(BaseModel):
                 condition=models.Q(family__isnull=False),
                 name="unique_product_family_flavor_weight",
             ),
+            box_quantity_constraint("product_box_quantity_with_unit"),
         ]
         indexes = [
             models.Index(fields=("category", "is_active", "sort_order")),
             models.Index(fields=("badge",)),
             models.Index(fields=("is_featured",)),
         ]
+
+    def _box_quantity_source(self):
+        """Variant's own quantity per box wins; otherwise the family's shared value is used."""
+        if self.box_quantity is None and self.family is not None and self.family.box_quantity is not None:
+            return self.family
+        return self
+
+    @property
+    def effective_box_quantity(self):
+        return self._box_quantity_source().box_quantity
+
+    @property
+    def effective_box_quantity_unit(self) -> str:
+        return self._box_quantity_source().box_quantity_unit
 
     def __str__(self):
         return f"{self.code} — {translated_value(self.name)}"

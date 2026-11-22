@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.catalog.choices import BoxQuantityUnitChoice
 from apps.catalog.models import Product
 from apps.catalog.serializers.category_serializer import CategorySerializer
 from apps.catalog.serializers.flavor_serializer import FlavorSerializer
@@ -41,6 +42,13 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     weight = WeightSerializer(read_only=True)
     variants = serializers.SerializerMethodField()
+    # Variant's own value, or the family's shared value when the variant has none.
+    box_quantity = serializers.DecimalField(
+        source="effective_box_quantity", max_digits=10, decimal_places=3, read_only=True, allow_null=True
+    )
+    box_quantity_unit = serializers.ChoiceField(
+        source="effective_box_quantity_unit", choices=BoxQuantityUnitChoice.choices, read_only=True, allow_blank=True
+    )
 
     class Meta:
         model = Product
@@ -51,6 +59,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "description",
             "code",
             "box_weight",
+            "box_quantity",
+            "box_quantity_unit",
             "shelf_life_months",
             "category",
             "flavor",
